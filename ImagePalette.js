@@ -6,7 +6,7 @@ class ImagePalette {
       this.version = "1";
       this.scale = 40;
       this.#colors = [];
-      this.onrender = null;
+      this.render = null;
       this.accentColors = [];
       this.neutralColors = [];
    }
@@ -181,8 +181,8 @@ class ImagePalette {
       console.log(neutral)
       accent.forEach(c => this.accentColors.push(this.#hslToHex(c.h, c.s, c.l)));
       neutral.forEach(c => this.neutralColors.push(this.#hslToHex(c.h, c.s, c.l)));
-      if (this.onrender) {
-         this.onrender();
+      if (this.render) {
+         this.render();
       }
    }
 }
