@@ -191,8 +191,6 @@ class ImagePalette {
       neutral = this.#RemoveSimilarColors(neutral, 10);
       accent.sort((a, b) => Math.abs(a.l - 50) - Math.abs(b.l - 50));
       neutral.sort((a, b) => b.l - a.l)
-      accent = accent.slice(0,5)
-      neutral = neutral.slice(0,5)
       accent.forEach(c => this.accentColors.push(this.#hslToHex(c.h, c.s, c.l)));
       neutral.forEach(c => this.neutralColors.push(this.#hslToHex(c.h, c.s, c.l)));
       let renderEvent = new CustomEvent('render', {});
