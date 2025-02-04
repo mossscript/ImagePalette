@@ -58,7 +58,7 @@ class ImagePalette {
          return acc;
       }, {});
       let sortedHues = Object.entries(hueFrequency)
-         .sort((a, b) => a[1] - b[1])
+         .sort((a, b) => b[1] - a[1])
          .map(entry => Number(entry[0]));
       let result = [];
       while (sortedHues.length > 0) {
@@ -186,9 +186,9 @@ class ImagePalette {
       accent = neutral = this.#colors;
       accent = this.#colors.filter(color => (color.l >= 20 && color.l <= 80) && (color.s >= 30));
       neutral = this.#colors.filter(color => (color.l >= 10 && color.l <= 90) && (color.l < 20 || color.l > 80) && (color.s < 30));
-      accent.sort((a, b) => Math.abs(a.l - 50) - Math.abs(b.l - 50));
       accent = this.#RemoveSimilarColors(accent, this.range);
       neutral = this.#RemoveSimilarColors(neutral, this.range);
+      //accent.sort((a, b) => Math.abs(a.l - 50) - Math.abs(b.l - 50));
       //accent.sort((a, b) => Math.abs(a.l - 50) - Math.abs(b.l - 50));
       neutral.sort((a, b) => b.l - a.l)
       accent.forEach(c => this.accentColors.push(this.#hslToHex(c.h, c.s, c.l)));

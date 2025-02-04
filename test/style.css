@@ -22,7 +22,6 @@ main{
    font-size: 32px;
    font-weight: 800;
    padding: 8px;
-   border-bottom: 4px solid #000;
    margin-bottom: 16px;
 }
 
@@ -45,7 +44,6 @@ main{
    min-height: 35px;
    width: 70px;
 }
-
 #imageBar{
    position: fixed;
    bottom: 16px;
@@ -65,4 +63,17 @@ main{
 #imageBar>*{
    height: 100%;
    border-radius: 8px;
+   transition: 0.5s;
+}
+#imageBar>img:active,#imageBar>button:active{
+   transition: 0.5s;
+   scale: 0.9;
+   opacity: 0.5;
+   cursor: pointer;
+}
+button{
+   padding: 16px;
+   border: 2px solid #000;
+   color: #000;
+   font-size: 18px;
 }
