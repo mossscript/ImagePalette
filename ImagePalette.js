@@ -5,20 +5,21 @@ class ImagePalette {
    constructor() {
       this.version = "1";
       this.scale = 40;
+      this.range = 30;
       this.#virtualElement = document.createElement('div');
       this.#colors = [];
       this.accentColors = [];
       this.neutralColors = [];
       this.eventTarget = new EventTarget();
    }
-   selectImage(elm) {
+   imageElm(elm) {
       this.img = new Image();
       this.img.src = elm.src;
       this.img.onload = () => {
          this.#canvas();
       };
    }
-   srcImage(src) {
+   imageSrc(src) {
       this.img = new Image();
       this.img.src = src;
       this.img.onload = () => {
@@ -52,28 +53,28 @@ class ImagePalette {
       return undefined
    }
    #RemoveSimilarColors(colors, range) {
-         let hueFrequency = colors.reduce((acc, color) => {
-            acc[color.h] = (acc[color.h] || 0) + 1;
-            return acc;
-         }, {});
-         let sortedHues = Object.entries(hueFrequency)
-            .sort((a, b) => b[1] - a[1])
-            .map(entry => Number(entry[0]));
-         let result = [];
-         while (sortedHues.length > 0) {
-            let current = sortedHues[0];
-            result.push(current);
-            sortedHues = sortedHues.filter(num => Math.abs(num - current) > range);
-         }
-         colors = colors.filter(color => {
-            if (result.includes(color.h)) {
-               result = result.filter(h => h !== color.h);
-               return true;
-            }
-            return false;
-         });
-         return colors;
+      let hueFrequency = colors.reduce((acc, color) => {
+         acc[color.h] = (acc[color.h] || 0) + 1;
+         return acc;
+      }, {});
+      let sortedHues = Object.entries(hueFrequency)
+         .sort((a, b) => a[1] - b[1])
+         .map(entry => Number(entry[0]));
+      let result = [];
+      while (sortedHues.length > 0) {
+         let current = sortedHues[0];
+         result.push(current);
+         sortedHues = sortedHues.filter(num => Math.abs(num - current) > range);
       }
+      colors = colors.filter(color => {
+         if (result.includes(color.h)) {
+            result = result.filter(h => h !== color.h);
+            return true;
+         }
+         return false;
+      });
+      return colors;
+   }
    #rgbToHsl(r, g, b, a) {
       r /= 255;
       g /= 255;
@@ -183,13 +184,12 @@ class ImagePalette {
    #render() {
       let accent, neutral;
       accent = neutral = this.#colors;
-      accent = this.#colors.filter(color => (color.l >= 30 && color.l <= 70) && (color.s >= 40));
-      neutral = this.#colors.filter(color => (color.l >= 10 && color.l <= 90) && (color.l < 30 || color.l > 70) && (color.s < 40));
-      accent.sort((a, b) => b.s - a.s)
-      neutral.sort((a, b) => b.s - a.s)
-      accent = this.#RemoveSimilarColors(accent, 10);
-      neutral = this.#RemoveSimilarColors(neutral, 10);
+      accent = this.#colors.filter(color => (color.l >= 20 && color.l <= 80) && (color.s >= 30));
+      neutral = this.#colors.filter(color => (color.l >= 10 && color.l <= 90) && (color.l < 20 || color.l > 80) && (color.s < 30));
       accent.sort((a, b) => Math.abs(a.l - 50) - Math.abs(b.l - 50));
+      accent = this.#RemoveSimilarColors(accent, this.range);
+      neutral = this.#RemoveSimilarColors(neutral, this.range);
+      //accent.sort((a, b) => Math.abs(a.l - 50) - Math.abs(b.l - 50));
       neutral.sort((a, b) => b.l - a.l)
       accent.forEach(c => this.accentColors.push(this.#hslToHex(c.h, c.s, c.l)));
       neutral.forEach(c => this.neutralColors.push(this.#hslToHex(c.h, c.s, c.l)));
