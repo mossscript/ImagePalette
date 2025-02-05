@@ -18,6 +18,10 @@
             <div>nothing</div>
          </div>
       </div>
+      <div id="option">
+         <span>range</span>
+         <input type="range" name="range" min="0" max="360" value="30" oninput="C.range = this.value">
+      </div>
       <div id="imageBar">
          <button id="upload" onclick="C.uploadImage()">upload</button>
          <img onclick="C.imageElm(this)" src="img/1.jpg" alt="">

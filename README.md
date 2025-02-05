@@ -14,9 +14,10 @@
 To get started, you need to create an instance of `ImagePalette`:
 ```javascript
 let palette = new ImagePalette();
-palette.srcImage('path/to/image.png');
-/* or */// palette.selectImage(imageElm);
-/* or */// palette.uploadImage();
+palette.range
+palette.imageSrc('path/to/image.png');
+/* or */ // palette.imageElm(elm);
+/* or */ // palette.uploadImage();
 palette.onrender = () => {
    console.log(palette.accentColors);
    console.log(palette.neutralColors);

@@ -1,11 +1,14 @@
 /*** ImagePalette v1 ***/
 class ImagePalette {
+   #img;
+   #scale;
+   #range;
    #colors;
    #virtualElement;
    constructor() {
       this.version = "1";
-      this.scale = 40;
-      this.range = 30;
+      this.#scale = 40;
+      this.#range = 30;
       this.#virtualElement = document.createElement('div');
       this.#colors = [];
       this.accentColors = [];
@@ -13,16 +16,16 @@ class ImagePalette {
       this.eventTarget = new EventTarget();
    }
    imageElm(elm) {
-      this.img = new Image();
-      this.img.src = elm.src;
-      this.img.onload = () => {
+      this.#img = new Image();
+      this.#img.src = elm.src;
+      this.#img.onload = () => {
          this.#canvas();
       };
    }
    imageSrc(src) {
-      this.img = new Image();
-      this.img.src = src;
-      this.img.onload = () => {
+      this.#img = new Image();
+      this.#img.src = src;
+      this.#img.onload = () => {
          this.#canvas();
       };
    }
@@ -38,9 +41,9 @@ class ImagePalette {
             reader.onerror = (error) => reject(error);
             reader.readAsDataURL(file);
          });
-         this.img = new Image();
-         this.img.src = dataUrl;
-         this.img.onload = () => {
+         this.#img = new Image();
+         this.#img.src = dataUrl;
+         this.#img.onload = () => {
             this.#canvas();
          };
       })
@@ -51,6 +54,20 @@ class ImagePalette {
    }
    get onrender() {
       return undefined
+   }
+   get range() {
+      return this.#range;
+   }
+   set range(num) {
+      this.#range = num;
+      if (this.#img) this.#render();
+   }
+   get scale() {
+      return this.#scale;
+   }
+   set scale(num) {
+      this.#scale = num;
+      if (this.#img) this.#canvas();
    }
    #RemoveSimilarColors(colors, range) {
       let hueFrequency = colors.reduce((acc, color) => {
@@ -156,16 +173,13 @@ class ImagePalette {
    }
    #canvas() {
       this.#colors = [];
-      this.accentColors = [];
-      this.neutralColors = [];
       let cvs = document.createElement('canvas');
       let ctx = cvs.getContext('2d');
-      [cvs.width, cvs.height] = [this.img.naturalWidth, this.img.naturalHeight];
-      ctx.drawImage(this.img, 0, 0, cvs.width, cvs.height);
+      [cvs.width, cvs.height] = [this.#img.naturalWidth, this.#img.naturalHeight];
+      ctx.drawImage(this.#img, 0, 0, cvs.width, cvs.height);
       let ratio = parseFloat((cvs.height / cvs.width).toFixed(2));
-      let scale = this.scale;
-      let wScale = ratio <= 1 ? parseInt(scale * ratio) : scale;
-      let hScale = ratio <= 1 ? scale : parseInt(scale * ratio);
+      let wScale = ratio <= 1 ? parseInt(this.#scale * ratio) : this.#scale;
+      let hScale = ratio <= 1 ? this.#scale : parseInt(this.#scale * ratio);
       for (let i = 1; i < wScale + 1; i++) {
          for (let j = 1; j < hScale + 1; j++) {
             let x = Math.ceil((i * cvs.width / wScale) - (cvs.width / wScale));
@@ -183,13 +197,13 @@ class ImagePalette {
    }
    #render() {
       let accent, neutral;
+      this.accentColors = [];
+      this.neutralColors = [];
       accent = neutral = this.#colors;
       accent = this.#colors.filter(color => (color.l >= 20 && color.l <= 80) && (color.s >= 30));
       neutral = this.#colors.filter(color => (color.l >= 10 && color.l <= 90) && (color.l < 20 || color.l > 80) && (color.s < 30));
-      accent = this.#RemoveSimilarColors(accent, this.range);
-      neutral = this.#RemoveSimilarColors(neutral, this.range);
-      //accent.sort((a, b) => Math.abs(a.l - 50) - Math.abs(b.l - 50));
-      //accent.sort((a, b) => Math.abs(a.l - 50) - Math.abs(b.l - 50));
+      accent = this.#RemoveSimilarColors(accent, this.#range);
+      neutral = this.#RemoveSimilarColors(neutral, this.#range);
       neutral.sort((a, b) => b.l - a.l)
       accent.forEach(c => this.accentColors.push(this.#hslToHex(c.h, c.s, c.l)));
       neutral.forEach(c => this.neutralColors.push(this.#hslToHex(c.h, c.s, c.l)));
