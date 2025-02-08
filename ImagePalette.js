@@ -7,7 +7,7 @@ class ImagePalette {
    #virtualElement;
    constructor() {
       this.version = "1";
-      this.#scale = 40;
+      this.#scale = 50;
       this.#range = 30;
       this.#virtualElement = document.createElement('div');
       this.#colors = [];
